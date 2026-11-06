@@ -33,7 +33,7 @@ This repository is part of a series of educational AppSec labs
 Fetchly serves your documents from a private vault directory. Your goal:
 
 > **Read a file that lives _outside_ the vault — specifically, capture the
-> flag stored in `flag.txt` at the application root.**
+> flag stored in `lab/flag.txt`, one level above the served `storage/` dir.**
 
 The flag has the format `FLAG{...}`.
 
@@ -64,7 +64,32 @@ There is no input validation at all on this level. The flag is one directory
 <em>above</em> <code>storage/</code>.
 </details>
 
-A full walkthrough lives in [SOLUTION.md](SOLUTION.md) (spoilers!).
+A full walkthrough lives in [docs/SOLUTION.md](docs/SOLUTION.md) (spoilers!).
+
+---
+
+## 🗂️ Project layout
+
+```
+fetchly/
+├── src/fetchly/            # the application (the bug lives here)
+│   ├── app.py              # Flask app — vulnerable download endpoint
+│   └── templates/
+│       └── dashboard.html  # UI (kept out of the Python code)
+├── lab/                    # everything specific to the challenge
+│   ├── storage/            # decoy documents (the "allowed" directory)
+│   └── flag.txt            # the target — lives OUTSIDE storage/ on purpose
+├── docs/SOLUTION.md        # exploit writeup + the fix (spoilers)
+├── .github/workflows/      # ci · trivy · release-please · publish (GHCR)
+├── Dockerfile              # hardened multi-stage image
+├── docker-compose.yml
+├── pyproject.toml          # ruff + black config, src packaging
+└── requirements.txt
+```
+
+The clean split between `src/` (app) and `lab/` (challenge scenario) is
+deliberate: it makes the vulnerable code easy to read and keeps the flag
+physically outside the served directory, which is what makes traversal work.
 
 ---
 
@@ -89,8 +114,17 @@ docker run --rm -p 5000:5000 ghcr.io/iv0ks/fetchly:latest
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-python app.py
+
+# Run the app (src/ layout). Either of these works:
+PYTHONPATH=src flask --app fetchly run --port 5000
+# ...or with auto-reload while developing:
+PYTHONPATH=src flask --app fetchly run --port 5000 --debug
 ```
+
+Then open <http://localhost:5000>.
+
+> The app finds its lab data via the `LAB_DIR` env var, defaulting to the
+> repo's `./lab` directory. Override it with `LAB_DIR=/path/to/lab` if needed.
 
 ---
 
