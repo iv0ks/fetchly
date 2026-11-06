@@ -4,7 +4,7 @@
 
 ## The vulnerability
 
-`src/fetchly/app.py` builds the file path like this:
+`app/main.py` builds the file path like this:
 
 ```python
 target_path = os.path.join(STORAGE_DIR, doc)   # doc comes from the user

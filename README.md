@@ -72,8 +72,8 @@ A full walkthrough lives in [docs/SOLUTION.md](docs/SOLUTION.md) (spoilers!).
 
 ```
 fetchly/
-├── src/fetchly/            # the application (the bug lives here)
-│   ├── app.py              # Flask app — vulnerable download endpoint
+├── app/                    # the application package (the bug lives here)
+│   ├── main.py             # Flask app — vulnerable download endpoint
 │   └── templates/
 │       └── dashboard.html  # UI (kept out of the Python code)
 ├── lab/                    # everything specific to the challenge
@@ -83,11 +83,11 @@ fetchly/
 ├── .github/workflows/      # ci · trivy · release-please · publish (GHCR)
 ├── Dockerfile              # hardened multi-stage image
 ├── docker-compose.yml
-├── pyproject.toml          # ruff + black config, src packaging
+├── pyproject.toml          # ruff + black config, packaging
 └── requirements.txt
 ```
 
-The clean split between `src/` (app) and `lab/` (challenge scenario) is
+The clean split between `app/` (code) and `lab/` (challenge scenario) is
 deliberate: it makes the vulnerable code easy to read and keeps the flag
 physically outside the served directory, which is what makes traversal work.
 
@@ -115,10 +115,10 @@ docker run --rm -p 5000:5000 ghcr.io/iv0ks/fetchly:latest
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Run the app (src/ layout). Either of these works:
-PYTHONPATH=src flask --app fetchly run --port 5000
+# Run the app (the `app` package lives at the repo root). Either works:
+flask --app app.main run --port 5000
 # ...or with auto-reload while developing:
-PYTHONPATH=src flask --app fetchly run --port 5000 --debug
+flask --app app.main run --port 5000 --debug
 ```
 
 Then open <http://localhost:5000>.
