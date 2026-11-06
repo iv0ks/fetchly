@@ -1,0 +1,7 @@
+FLAG{fetchly_p4th_tr4v3rs4l_l3v3l_1}
+
+If you are reading this through the /documents/download endpoint, you have
+successfully escaped the storage/ directory via path traversal. Well done.
+
+This file lives OUTSIDE the intended vault directory. A correctly implemented
+download handler should have made it unreachable.

@@ -1,0 +1,6 @@
+Welcome to Fetchly!
+
+This is your personal document vault. Everything you upload here stays
+private to your account... or so the marketing page claims.
+
+Try downloading your documents from the dashboard.
