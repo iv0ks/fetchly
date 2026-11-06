@@ -19,18 +19,18 @@ RUN useradd --create-home --uid 10001 appuser
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/install/bin:${PATH}" \
-    PYTHONPATH="/install/lib/python3.12/site-packages"
+    PYTHONPATH="/install/lib/python3.12/site-packages:/app/src" \
+    LAB_DIR="/app/lab"
 
 WORKDIR /app
 
 # Bring in the pre-built dependencies from the builder stage.
 COPY --from=builder /install /install
 
-# Copy application code and the lab data (decoy docs + the flag that lives
-# outside the storage/ dir on purpose, so traversal has a target).
-COPY app.py ./
-COPY storage ./storage
-COPY flag.txt ./flag.txt
+# Copy application code (src/ layout) and the lab data. The flag lives in
+# lab/ OUTSIDE lab/storage on purpose, so path traversal has a target.
+COPY src ./src
+COPY lab ./lab
 
 USER appuser
 
@@ -43,4 +43,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # --worker-tmp-dir /tmp keeps things working under a read-only root filesystem
 # (see docker-compose.yml: read_only + tmpfs /tmp).
 CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", \
-     "--worker-tmp-dir", "/tmp", "app:app"]
+     "--worker-tmp-dir", "/tmp", "fetchly.app:app"]

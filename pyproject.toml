@@ -4,6 +4,9 @@ version = "0.0.0"
 description = "Fetchly — Intentionally vulnerable path traversal lab (Flask)"
 requires-python = ">=3.11"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.black]
 line-length = 88
 target-version = ["py311"]
@@ -20,4 +23,4 @@ select = ["E", "F", "I", "B", "S", "UP"]
 ignore = ["S104"]
 
 [tool.ruff.lint.per-file-ignores]
-"app.py" = ["S104"]
+"src/fetchly/app.py" = ["S104"]

@@ -5,7 +5,7 @@
 .pre-commit-config.yaml
 .editorconfig
 README.md
-SOLUTION.md
+docs/
 SECURITY.md
 LICENSE
 docker-compose.yml
