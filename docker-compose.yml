@@ -1,0 +1,17 @@
+services:
+  fetchly:
+    build: .
+    image: ghcr.io/iv0ks/fetchly:latest
+    container_name: fetchly
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    # Drop extra privileges — the app never needs them. This is here to show
+    # good container hygiene even though the app itself is intentionally weak.
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
