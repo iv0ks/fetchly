@@ -29,9 +29,9 @@ from flask import Flask, Response, abort, render_template, request, send_file
 #
 # LAB_DIR can be overridden via env var (the Docker image sets it). Otherwise we
 # fall back to the repo's ./lab directory, resolved relative to this file:
-#   src/fetchly/app.py  ->  ../../lab
+#   app/main.py  ->  ../lab
 _DEFAULT_LAB_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "lab")
+    os.path.join(os.path.dirname(__file__), os.pardir, "lab")
 )
 LAB_DIR = os.environ.get("LAB_DIR", _DEFAULT_LAB_DIR)
 
@@ -87,7 +87,7 @@ def create_app() -> Flask:
     return flask_app
 
 
-# Module-level app for gunicorn ("fetchly.app:app") and `flask --app fetchly`.
+# Module-level app for gunicorn ("app.main:app") and `flask --app app.main`.
 app = create_app()
 
 
