@@ -15,3 +15,7 @@ node_modules/
 .DS_Store
 .idea/
 .vscode/
+
+# The challenge flag is created inside the Docker image at build time
+# (see Dockerfile). It must NOT live in the repo, or it would spoil the lab.
+/flag.txt

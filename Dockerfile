@@ -27,11 +27,15 @@ WORKDIR /app
 # Bring in the pre-built dependencies from the builder stage.
 COPY --from=builder /install /install
 
-# Copy application code and the documents. The flag lives at /app/flag.txt,
-# OUTSIDE the served docs/ directory on purpose, so path traversal has a target.
+# Copy application code and the served documents.
 COPY app ./app
 COPY docs ./docs
-COPY flag.txt ./flag.txt
+
+# Create the challenge flag INSIDE the image, at /app/flag.txt — OUTSIDE the
+# served docs/ directory on purpose, so path traversal has a target. The flag
+# is intentionally NOT committed to the repo (it would spoil the lab); it only
+# exists at runtime, which is the whole point of attacking the Docker artifact.
+RUN printf 'FLAG{P4TH_TR4V3RS4L_L3V3L_1}\n' > /app/flag.txt
 
 USER appuser
 
