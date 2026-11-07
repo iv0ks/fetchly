@@ -137,9 +137,11 @@ Then open <http://localhost:5000>.
 
 > The app finds its data via the `DATA_ROOT` env var, defaulting to the repo
 > root (it serves `<DATA_ROOT>/docs/` and the flag is at `<DATA_ROOT>/flag.txt`).
-> The Docker image sets `DATA_ROOT=/app` and creates the flag there. Running
-> straight from Python you won't have a `flag.txt` unless you create one — the
-> intended way to capture it is against the container.
+> The flag is **not** committed — it is provisioned at runtime: the Docker image
+> bakes it in at build time, and when you run from Python the app seeds
+> `flag.txt` on startup if it is missing. Either way the challenge just works.
+> Override the value with the `FLAG` env var (or `--build-arg FLAG=...` for
+> Docker). The seeded `flag.txt` is gitignored, so it never lands in the repo.
 
 ---
 
