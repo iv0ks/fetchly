@@ -13,14 +13,14 @@
     {% for doc in documents %}
         <li>
             <span><span aria-hidden="true">📄</span> {{ doc }}</span>
-            <a class="btn" href="/docs/download?file={{ doc }}"
+            <a class="btn" href="/docs?name={{ doc }}"
                aria-label="Download {{ doc }}">Download</a>
         </li>
     {% endfor %}
     </ul>
     <footer>
         Fetchly — files are served from your private vault via
-        <code>/docs/download?file=&lt;filename&gt;</code>.
+        <code>/docs?name=&lt;filename&gt;</code>.
     </footer>
 </body>
 </html>

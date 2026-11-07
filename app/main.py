@@ -4,12 +4,14 @@ Fetchly is a tiny "personal document vault" web app. Signed-in users keep
 their files (contracts, notes, invoices) in a private documents folder and can
 preview or download any of them from the dashboard.
 
-Under the hood the download endpoint builds a filesystem path by concatenating
+Under the hood the document endpoint builds a filesystem path by concatenating
 a user-controlled filename onto the documents directory, with no validation.
 That is the whole point of this lab: a textbook *path traversal* (CWE-22).
 
-This module is just the application factory. The routes live in
-``app.routes`` and the paths/configuration in ``app.config``.
+This module is the application factory. It resolves the runtime data paths
+(from the ``DATA_ROOT`` env var) and stores them on ``app.config``; the routes
+read them from there. The route definitions live in ``app.routes`` and the
+static defaults in ``app.config``.
 
 This code is deliberately insecure. It exists ONLY to be run locally as a
 practice target (e.g. with Burp Suite). Do NOT deploy it anywhere public and
@@ -18,14 +20,31 @@ do NOT reuse this pattern in real software. See README.md for the disclaimer.
 
 from __future__ import annotations
 
+import os
+
 from flask import Flask, Response
 
+from app.config import DEFAULT_DATA_ROOT, DOCUMENTS_DIRNAME, LISTED_DOCUMENTS
 from app.routes import bp, render_error
 
 
 def create_app() -> Flask:
-    """Application factory."""
+    """Application factory.
+
+    Resolves the data paths at call time (not import time) so tests can point
+    different instances at different data roots via the DATA_ROOT env var.
+    """
     flask_app = Flask(__name__)
+
+    # Root that holds both the served documents and the flag (the traversal
+    # target). Defaults to the repo root; the Docker image sets DATA_ROOT=/app.
+    data_root = os.environ.get("DATA_ROOT", DEFAULT_DATA_ROOT)
+    flask_app.config["DATA_ROOT"] = data_root
+    # Directory that is *supposed* to be the only place documents are served
+    # from. The vulnerability is that we never actually enforce this boundary.
+    flask_app.config["DOCUMENTS_DIR"] = os.path.join(data_root, DOCUMENTS_DIRNAME)
+    flask_app.config["LISTED_DOCUMENTS"] = LISTED_DOCUMENTS
+
     flask_app.register_blueprint(bp)
 
     @flask_app.errorhandler(400)
