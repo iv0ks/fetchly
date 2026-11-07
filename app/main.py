@@ -24,8 +24,36 @@ import os
 
 from flask import Flask, Response
 
-from app.config import DEFAULT_DATA_ROOT, DOCUMENTS_DIRNAME, LISTED_DOCUMENTS
+from app.config import (
+    DEFAULT_DATA_ROOT,
+    DEFAULT_FLAG,
+    DOCUMENTS_DIRNAME,
+    FLAG_FILENAME,
+    LISTED_DOCUMENTS,
+)
 from app.routes import bp, render_error
+
+
+def _seed_flag(data_root: str) -> None:
+    """Create the challenge flag at <data_root>/flag.txt if it is missing.
+
+    This is lab seeding, not application logic: it makes the challenge work the
+    same whether you run the Docker image (which also writes the flag at build
+    time) or start the app straight from Python, without ever committing the
+    flag to the repo. The write is best-effort: under the container's read-only
+    root filesystem the flag already exists, so a failed write here is fine.
+    """
+    flag_path = os.path.join(data_root, FLAG_FILENAME)
+    if os.path.exists(flag_path):
+        return
+    flag_value = os.environ.get("FLAG", DEFAULT_FLAG)
+    try:
+        with open(flag_path, "w", encoding="utf-8") as fh:
+            fh.write(flag_value + "\n")
+    except OSError:
+        # Read-only FS or similar — the flag is expected to already be present
+        # in that case (e.g. baked into the Docker image). Nothing to do.
+        pass
 
 
 def create_app() -> Flask:
@@ -44,6 +72,10 @@ def create_app() -> Flask:
     # from. The vulnerability is that we never actually enforce this boundary.
     flask_app.config["DOCUMENTS_DIR"] = os.path.join(data_root, DOCUMENTS_DIRNAME)
     flask_app.config["LISTED_DOCUMENTS"] = LISTED_DOCUMENTS
+
+    # Make the lab self-contained: ensure the traversal target exists even when
+    # running straight from Python (no Docker build step to create it).
+    _seed_flag(data_root)
 
     flask_app.register_blueprint(bp)
 

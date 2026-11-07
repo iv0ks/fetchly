@@ -22,6 +22,13 @@ DEFAULT_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.p
 # Name of the sub-directory (under DATA_ROOT) the app serves documents from.
 DOCUMENTS_DIRNAME = "docs"
 
+# The challenge flag. It is the *target* of the path traversal and lives at
+# <DATA_ROOT>/flag.txt (one level above the served docs/). It is intentionally
+# not committed to the repo; the app seeds it on startup if missing (and the
+# Docker image also writes it at build time). Override via the FLAG env var.
+FLAG_FILENAME = "flag.txt"
+DEFAULT_FLAG = "FLAG{P4TH_TR4V3RS4L_L3V3L_1}"
+
 # Documents shown on the dashboard so the app behaves like a real product.
 LISTED_DOCUMENTS = [
     "welcome.txt",
