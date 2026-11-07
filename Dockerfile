@@ -31,11 +31,16 @@ COPY --from=builder /install /install
 COPY app ./app
 COPY docs ./docs
 
-# Create the challenge flag INSIDE the image, at /app/flag.txt — OUTSIDE the
-# served docs/ directory on purpose, so path traversal has a target. The flag
-# is intentionally NOT committed to the repo (it would spoil the lab); it only
-# exists at runtime, which is the whole point of attacking the Docker artifact.
-RUN printf 'FLAG{P4TH_TR4V3RS4L_L3V3L_1}\n' > /app/flag.txt
+# Bake the challenge flag INTO the image at build time, at /app/flag.txt —
+# OUTSIDE the served docs/ directory on purpose, so path traversal has a target.
+# The flag is intentionally NOT committed to the repo (it would spoil the lab).
+#
+# We create it here (rather than relying on the app's startup seed) because the
+# container runs with a read-only root filesystem, so the app cannot write it
+# at runtime. When running straight from Python the app seeds it itself; here
+# it already exists, so that seed is a no-op. Override with --build-arg FLAG=...
+ARG FLAG=FLAG{P4TH_TR4V3RS4L_L3V3L_1}
+RUN printf '%s\n' "$FLAG" > /app/flag.txt
 
 USER appuser
 
