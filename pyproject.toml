@@ -24,3 +24,9 @@ ignore = ["S104"]
 
 [tool.ruff.lint.per-file-ignores]
 "app/main.py" = ["S104"]
+# Tests use assert and knowingly exercise the traversal; silence those rules.
+"tests/*" = ["S101", "S310"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

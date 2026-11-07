@@ -20,17 +20,18 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/install/bin:${PATH}" \
     PYTHONPATH="/install/lib/python3.12/site-packages:/app" \
-    LAB_DIR="/app/lab"
+    DATA_ROOT="/app"
 
 WORKDIR /app
 
 # Bring in the pre-built dependencies from the builder stage.
 COPY --from=builder /install /install
 
-# Copy application code and the lab data. The flag lives in lab/ OUTSIDE
-# lab/storage on purpose, so path traversal has a target.
+# Copy application code and the documents. The flag lives at /app/flag.txt,
+# OUTSIDE the served docs/ directory on purpose, so path traversal has a target.
 COPY app ./app
-COPY lab ./lab
+COPY docs ./docs
+COPY flag.txt ./flag.txt
 
 USER appuser
 
