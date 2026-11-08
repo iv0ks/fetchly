@@ -16,7 +16,7 @@ permissions:
 
 # Define the jobs that run in the workflow.
 jobs:
-  # Job-1: Create releases or prs using release-please-action.
+  # Job-1: Create releases or prs using release-please reusable workflow.
   release:
     name: SemVer
     uses: iv0ks/cicd-hub/.github/workflows/release-please.yml@main
