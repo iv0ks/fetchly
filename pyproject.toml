@@ -1,6 +1,6 @@
 [project]
 name = "fetchly"
-version = "1.0.0"
+version = "1.0.1"
 description = "Fetchly — Intentionally vulnerable path traversal lab (Flask)"
 requires-python = ">=3.11"
 

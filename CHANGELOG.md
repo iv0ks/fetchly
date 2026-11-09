@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/iv0ks/fetchly/compare/v1.0.0...v1.0.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* **delivery:** tag image as repo:version instead of repo/version ([0029b6a](https://github.com/iv0ks/fetchly/commit/0029b6ad1e0bf6f0644f81e3ec45c28aca6e4430))
+
 ## 1.0.0 (2026-11-09)
 
 
