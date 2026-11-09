@@ -20,7 +20,7 @@ updates:
 
   # Dockerfiles upates.
   - package-ecosystem: "docker"
-    directories: ["/apps/**"]
+    directories: ["/"]
     schedule:
       interval: "daily"
       time: "06:00"
