@@ -1,10 +1,7 @@
 # Continuous Integration workflow.
 #
-# Runs the pull request quality gates by calling the reusable workflows hosted
-# in the iv0ks/cicd-hub repository. The jobs are chained with `needs` so they
-# run sequentially and fail fast: a leaked secret stops the pipeline before we
-# spend time on dependency, lint or test checks. Drop the `needs` keys if you
-# prefer the jobs to run in parallel instead.
+# Runs the pull request quality gates by calling the reusable workflows hosted in the iv0ks/cicd-hub repository. The jobs are chained with `needs` so they
+# run sequentially and fail fast: a leaked secret stops the pipeline before we spend time on dependency, lint or test checks. 
 name: Integration
 
 # Define the event that triggers the workflow.
@@ -30,16 +27,14 @@ jobs:
     name: Secrets
     uses: iv0ks/cicd-hub/.github/workflows/secrets-scan.yml@main
 
-  # Job-2: Scan dependencies and IaC for known vulnerabilities (CVEs). Runs
-  # only if the secrets scan passed. This is the gate that catches vulnerable
-  # dependencies on the way in, including Dependabot PRs.
+  # Job-2: Scan dependencies and IaC for known vulnerabilities (CVEs). 
+  # Runs only if the secrets scan passed. This is the gate that catches vulnerable dependencies, including Dependabot PRs.
   vuln:
     name: Vulnerabilities
     needs: secrets
     uses: iv0ks/cicd-hub/.github/workflows/vuln-scan.yml@main
 
-  # Job-3: Lint and format check (ruff + black). Runs only if the vuln scan
-  # passed.
+  # Job-3: Lint and format check (ruff + black). Runs only if the vuln scan passed.
   lint:
     name: Lint
     needs: vuln
