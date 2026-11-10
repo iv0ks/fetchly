@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/iv0ks/fetchly/compare/v1.0.3...v1.0.4) (2026-11-10)
+
+
+### Bug Fixes
+
+* **docker:** resolve issues with python path ([bcc6b73](https://github.com/iv0ks/fetchly/commit/bcc6b737a0297eab3b4245040e860bf2a074f465))
+
 ## [1.0.3](https://github.com/iv0ks/fetchly/compare/v1.0.2...v1.0.3) (2026-11-10)
 
 
