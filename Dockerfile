@@ -1,4 +1,4 @@
-# Single source of truth for the Node.js version used by all stages.
+# Single source of truth for the Python version used by all stages.
 ARG PYTHON_VERSION=3.12
 
 ######################################################################################################
@@ -17,8 +17,8 @@ WORKDIR /build
 # Copy the requirements file into the build context.
 COPY requirements.txt .
 
-# Install Python dependencies into the dedicated prefix.
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+# Install Python dependencies into a single, version-independent directory.
+RUN pip install --no-cache-dir --target=/install -r requirements.txt
 
 ######################################################################################################
 #############################                  STAGE 2: RUNTIME                 ######################
@@ -38,7 +38,7 @@ RUN useradd --create-home --uid 10001 appuser
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/install/bin:${PATH}" \
-    PYTHONPATH="/install/lib/python${PYTHON_VERSION}/site-packages:/app" \
+    PYTHONPATH="/install:/app" \
     DATA_ROOT="/app"
 
 # Set the working directory for the runtime environment.
