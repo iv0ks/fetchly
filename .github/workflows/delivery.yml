@@ -30,6 +30,6 @@ jobs:
   # Job-2: Scan the published image for vulnerabilities. Runs only if the
   # build succeeded.
   image-scan:
-    name: Image Scan
+    name: Image
     needs: build
     uses: iv0ks/cicd-hub/.github/workflows/image-scan.yml@main
