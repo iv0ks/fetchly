@@ -1,0 +1,31 @@
+# Continuous Integration workflow.
+name: Integration
+
+# Define the event that triggers the workflow.
+# Run when a PR targeting main is opened or updated with new commits.
+on:
+  pull_request:
+    branches: [main]
+
+# Least-privilege: the called workflows only need to read the repository.
+permissions:
+  contents: read
+
+jobs:
+  # Job-1: Scan the repository for leaked secrets (credentials, tokens, keys).
+  # Runs first because a committed secret is the most urgent thing to catch.
+  secrets:
+    name: Secrets
+    uses: iv0ks/cicd-hub/.github/workflows/secrets-scan.yml@main
+
+  # Job-2: Lint and format check (ruff + black). Runs only if the secrets scan passed.
+  lint:
+    name: Code
+    needs: secrets
+    uses: iv0ks/cicd-hub/.github/workflows/python-lint.yml@main
+
+  # Job-3: Run the test suite (pytest). Runs only if lint passed.
+  test:
+    name: Code
+    needs: lint
+    uses: iv0ks/cicd-hub/.github/workflows/python-test.yml@main
