@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.3](https://github.com/iv0ks/fetchly/compare/v1.0.2...v1.0.3) (2026-11-10)
+
+
+### Bug Fixes
+
+* **docker:** apply os security patches to clear fixable cves ([b41cc46](https://github.com/iv0ks/fetchly/commit/b41cc4672c62a20c71e2eaf6e171795017c4011d))
+
+
+### Build System
+
+* **app:** optimize multi stage images ([714decb](https://github.com/iv0ks/fetchly/commit/714decb4013900d5f5a8bd7a0184860c969d69de))
+
 ## [1.0.2](https://github.com/iv0ks/fetchly/compare/v1.0.1...v1.0.2) (2026-11-10)
 
 
