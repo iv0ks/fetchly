@@ -1,4 +1,10 @@
 # Continuous Integration workflow.
+#
+# Runs the pull request quality gates by calling the reusable workflows hosted
+# in the iv0ks/cicd-hub repository. The jobs are chained with `needs` so they
+# run sequentially and fail fast: a leaked secret stops the pipeline before we
+# spend time on dependency, lint or test checks. Drop the `needs` keys if you
+# prefer the jobs to run in parallel instead.
 name: Integration
 
 # Define the event that triggers the workflow.
@@ -6,6 +12,12 @@ name: Integration
 on:
   pull_request:
     branches: [main]
+
+# Cancel an in-progress run when new commits are pushed to the same PR, so we
+# only ever spend CI minutes on the latest state of the branch.
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: true
 
 # Least-privilege: the called workflows only need to read the repository.
 permissions:
@@ -18,14 +30,23 @@ jobs:
     name: Secrets
     uses: iv0ks/cicd-hub/.github/workflows/secrets-scan.yml@main
 
-  # Job-2: Lint and format check (ruff + black). Runs only if the secrets scan passed.
-  lint:
-    name: Code
+  # Job-2: Scan dependencies and IaC for known vulnerabilities (CVEs). Runs
+  # only if the secrets scan passed. This is the gate that catches vulnerable
+  # dependencies on the way in, including Dependabot PRs.
+  vuln:
+    name: Vulnerabilities
     needs: secrets
+    uses: iv0ks/cicd-hub/.github/workflows/vuln-scan.yml@main
+
+  # Job-3: Lint and format check (ruff + black). Runs only if the vuln scan
+  # passed.
+  lint:
+    name: Lint
+    needs: vuln
     uses: iv0ks/cicd-hub/.github/workflows/python-lint.yml@main
 
-  # Job-3: Run the test suite (pytest). Runs only if lint passed.
+  # Job-4: Run the test suite (pytest). Runs only if lint passed.
   test:
-    name: Code
+    name: Test
     needs: lint
     uses: iv0ks/cicd-hub/.github/workflows/python-test.yml@main
