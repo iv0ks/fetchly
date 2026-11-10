@@ -18,5 +18,10 @@ jobs:
   # Job-1: Build and Push Docker Image to GHCR.
   build:
     name: Image
-    uses: iv0ks/cicd-hub/.github/workflows/build-push.yml@17e4876aec135006e5cdd157986ebfc69eda09b6 # 10/11/2026
+    uses: iv0ks/cicd-hub/.github/workflows/build-push.yml@main
 
+  # Job-2: Scan Docker Image.
+  image-scan:
+    name: Image
+    need: build
+    uses: iv0ks/cicd-hub/.github/workflows/image-scan.yml@main
