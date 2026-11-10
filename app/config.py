@@ -27,7 +27,7 @@ DOCUMENTS_DIRNAME = "docs"
 # not committed to the repo; the app seeds it on startup if missing (and the
 # Docker image also writes it at build time). Override via the FLAG env var.
 FLAG_FILENAME = "flag.txt"
-DEFAULT_FLAG = "FLAG{P4TH_TR4V3RS4L_L3V3L_1}"
+DEFAULT_FLAG = "FLAG{FETCHLY_UNLOCKED_THE_VAULT}"
 
 # Documents shown on the dashboard so the app behaves like a real product.
 LISTED_DOCUMENTS = [

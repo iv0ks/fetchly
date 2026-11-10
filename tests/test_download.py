@@ -31,7 +31,7 @@ def client(tmp_path, monkeypatch):
     (docs_dir / "welcome.txt").write_text("hello from the vault\n")
     (docs_dir / "meeting-notes.txt").write_text("notes\n")
     (docs_dir / "q3-report.txt").write_text("report\n")
-    (tmp_path / "flag.txt").write_text("FLAG{P4TH_TR4V3RS4L_L3V3L_1}\n")
+    (tmp_path / "flag.txt").write_text("FLAG{FETCHLY_UNLOCKED_THE_VAULT}\n")
 
     # Point the factory at the temp root (read at create_app() time).
     monkeypatch.setenv("DATA_ROOT", str(tmp_path))

