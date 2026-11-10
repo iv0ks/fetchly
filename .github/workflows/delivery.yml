@@ -23,5 +23,5 @@ jobs:
   # Job-2: Scan Docker Image.
   image-scan:
     name: Image
-    need: build
+    needs: build
     uses: iv0ks/cicd-hub/.github/workflows/image-scan.yml@main
