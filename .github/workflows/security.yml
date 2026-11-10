@@ -2,7 +2,7 @@
 
 # Runs the vulnerability scan against the default branch on a schedule to catch CVEs that were disclosed *after* a dependency was merged (something the PR
 # gates cannot see). Complements Dependabot, which bumps versions but does not fail on newly vulnerable pinned dependencies.
-name: Scheduled Scan
+name: Security
 
 # Define the events that trigger the workflow.
 on:
