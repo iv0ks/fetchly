@@ -1,0 +1,17 @@
+http:
+  # Entry points define how Traefik listens for incoming requests.
+  routers:
+    # Fetchly router.
+    fetchly:
+      rule: "Host(`fetchly.iv0ks.dev`)"
+      entryPoints:
+        - websecure
+      service: fetchly
+      tls: { certResolver: namecheap }
+
+  # Services define how Traefik forwards requests to backend servers.
+  services:
+    fetchly:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:5000/"

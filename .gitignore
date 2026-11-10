@@ -19,3 +19,5 @@ node_modules/
 # The challenge flag is created inside the Docker image at build time
 # (see Dockerfile). It must NOT live in the repo, or it would spoil the lab.
 /flag.txt
+# Local secrets (Namecheap API credentials for Traefik's ACME DNS-01 challenge)
+.env
