@@ -1,6 +1,6 @@
 # Continuous Delivery workflow.
-# Builds and publishes the Docker image, then scans it. Triggered only by semver release tags (v1.2.3) created by release-please, 
-# so arbitrary tags never trigger a publish to GHCR.
+#
+# Builds and publishes the Docker image, then scans it. Triggered only by semver release tags (v1.2.3) created by release-please, so arbitrary tags never trigger a publish to GHCR.
 name: Delivery
 
 # Define the event that triggers the workflow.
