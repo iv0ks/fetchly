@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/iv0ks/fetchly/compare/v1.0.1...v1.0.2) (2026-11-10)
+
+
+### Refactoring
+
+* use thematic flag content instead of numbered level ([127418b](https://github.com/iv0ks/fetchly/commit/127418bebd54bfca0622317457fdbe29ee92c5e1))
+
 ## [1.0.1](https://github.com/iv0ks/fetchly/compare/v1.0.0...v1.0.1) (2026-11-09)
 
 
