@@ -3,6 +3,11 @@
 # ---- Stage 1: build dependencies into a wheel cache ------------------------
 FROM python:3.12-slim AS builder
 
+# Apply available OS security patches before building dependencies.
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /build
 
 # Install dependencies into a dedicated prefix we can copy into the runtime
@@ -12,6 +17,14 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # ---- Stage 2: minimal runtime ---------------------------------------------
 FROM python:3.12-slim AS runtime
+
+# Apply available OS security patches on top of the base image. This picks up
+# fixes (e.g. zlib1g) that are released between base-image updates, keeping the
+# scanned runtime image free of fixable OS CVEs. apt lists are removed to keep
+# the image small.
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user to run the app.
 RUN useradd --create-home --uid 10001 appuser
