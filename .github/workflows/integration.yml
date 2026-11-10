@@ -16,7 +16,7 @@ on:
     paths-ignore:
       - '.release-please-manifest.json'
       - 'pyproject.toml'
-      - '**/CHANGELOG.md'
+      - 'CHANGELOG.md'
 
 # Cancel an in-progress run when new commits are pushed to the same PR, so we
 # only ever spend CI minutes on the latest state of the branch.
