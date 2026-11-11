@@ -4,23 +4,59 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fetchly — Your documents</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1><span aria-hidden="true">📁</span> Fetchly</h1>
-    <p class="sub">Your personal document vault — welcome back, Alex.</p>
-    <ul>
-    {% for doc in documents %}
-        <li>
-            <span><span aria-hidden="true">📄</span> {{ doc }}</span>
-            <a class="btn" href="/docs?name={{ doc }}"
-               aria-label="Download {{ doc }}">Download</a>
-        </li>
-    {% endfor %}
-    </ul>
-    <footer>
-        Fetchly — files are served from your private vault via
-        <code>/docs?name=&lt;filename&gt;</code>.
+    <header class="site-header">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true">📁</span>
+            <span class="brand-name">Fetchly</span>
+        </div>
+        <nav class="site-nav">
+            <a href="/" class="active">Documents</a>
+            <a href="#" aria-disabled="true">Shared</a>
+            <a href="#" aria-disabled="true">Trash</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Your documents, safe in one place.</h1>
+        <p>Everything you’ve stored in your personal vault. Download any file
+           whenever you need it.</p>
+    </section>
+
+    <main class="vault">
+        <div class="vault-head">
+            <span>Name</span>
+            <span class="col-size">Size</span>
+            <span class="col-date">Modified</span>
+            <span class="col-action"></span>
+        </div>
+        <ul class="file-list">
+        {% for doc in documents %}
+            <li class="file-row">
+                <span class="file-name">
+                    <span class="file-icon kind-{{ doc.kind }}" aria-hidden="true">{{ doc.kind | upper }}</span>
+                    {{ doc.name }}
+                </span>
+                <span class="col-size">{{ doc.size }}</span>
+                <span class="col-date">{{ doc.modified }}</span>
+                <span class="col-action">
+                    <a class="btn" href="/docs?name={{ doc.name }}"
+                       aria-label="Download {{ doc.name }}">Download</a>
+                </span>
+            </li>
+        {% endfor %}
+        </ul>
+    </main>
+
+    <footer class="site-footer">
+        <p>© Fetchly — files are served from your private vault via
+           <code>/docs?name=&lt;filename&gt;</code>.</p>
+        <p class="muted">Your documents, encrypted and always within reach.</p>
     </footer>
 </body>
 </html>

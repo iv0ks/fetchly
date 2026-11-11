@@ -4,12 +4,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fetchly — Error {{ status }}</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='favicon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1><span aria-hidden="true">📁</span> Fetchly</h1>
-    <p class="error-code">{{ status }}</p>
-    <p class="error-message">{{ message }}</p>
-    <p><a class="back" href="/">← Back to your documents</a></p>
+    <header class="site-header">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true">📁</span>
+            <span class="brand-name">Fetchly</span>
+        </div>
+        <nav class="site-nav">
+            <a href="/">Documents</a>
+        </nav>
+    </header>
+
+    <section class="error-panel">
+        <p class="error-code">{{ status }}</p>
+        <p class="error-message">{{ message }}</p>
+        <p><a class="back" href="/">← Back to your documents</a></p>
+    </section>
+
+    <footer class="site-footer">
+        <p class="muted">Fetchly</p>
+    </footer>
 </body>
 </html>
