@@ -30,8 +30,21 @@ FLAG_FILENAME = "flag.txt"
 DEFAULT_FLAG = "FLAG{FETCHLY_UNLOCKED_THE_VAULT}"
 
 # Documents shown on the dashboard so the app behaves like a real product.
+# The size/modified/kind values are cosmetic (fake metadata) — only ``name`` is
+# ever used to build a request. Every listed document exists under docs/ so the
+# happy path works for each row; the challenge is reaching files *outside* it.
 LISTED_DOCUMENTS = [
-    "welcome.txt",
-    "meeting-notes.txt",
-    "q3-report.txt",
+    {"name": "welcome.txt", "kind": "txt", "size": "1.2 KB", "modified": "Jul 3, 2024"},
+    {
+        "name": "meeting-notes.txt",
+        "kind": "txt",
+        "size": "4.8 KB",
+        "modified": "Jul 3, 2024",
+    },
+    {
+        "name": "q3-report.txt",
+        "kind": "txt",
+        "size": "12.0 KB",
+        "modified": "Jul 1, 2024",
+    },
 ]
