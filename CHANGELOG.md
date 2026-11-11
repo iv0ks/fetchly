@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/iv0ks/fetchly/compare/v1.0.4...v1.0.5) (2026-11-11)
+
+
+### Refactoring
+
+* enrich listed documents with display metadata ([503e114](https://github.com/iv0ks/fetchly/commit/503e1141520ed601194ee45a804c6285ed3a6c0f))
+
 ## [1.0.4](https://github.com/iv0ks/fetchly/compare/v1.0.3...v1.0.4) (2026-11-10)
 
 
