@@ -1,10 +1,14 @@
 # Fetchly
 
+![CWE-22](https://img.shields.io/badge/CWE--22-Path%20Traversal-red?style=flat-square)
+![Python](https://img.shields.io/badge/Python-Flask-blue?style=flat-square&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Lab-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 [![GHCR](https://img.shields.io/badge/ghcr.io-iv0ks%2Ffetchly-blue?logo=docker)](https://github.com/iv0ks/fetchly/pkgs/container/fetchly)
-
 
 **Fetchly is an intentionally vulnerable application built for security education.** It contains a deliberate [path traversal](https://owasp.org/www-community/attacks/Path_Traversal)
 (CWE-22) flaw so you can practice finding and exploiting it in a safe and controlled environment.
+
+> ⚠️ **Spoilers ahead.** Try the challenge yourself before reading.
 
 <br>
 
@@ -13,9 +17,9 @@
 The repository is organised so the vulnerable code is easy to find and reason
 about. Three areas, clearly separated: the **application** itself in `app/`
 (a small Flask app split into factory, routes and config), the **served data**
-in `docs/` (the directory the app is *meant* to expose), and the **tooling**
+in `docs/` (the directory the app is _meant_ to expose), and the **tooling**
 around it (Docker, CI/CD, linters) that turns the lab into a production-shaped
-project. The challenge flag is deliberately kept *out* of both the repo and the
+project. The challenge flag is deliberately kept _out_ of both the repo and the
 served directory — see the note under the tree.
 
 ```
@@ -88,7 +92,7 @@ Bring up both services to also expose the app through Traefik with TLS:
 docker compose up -d
 ```
 
-Now the *same* app is reachable two ways at once:
+Now the _same_ app is reachable two ways at once:
 
 - **<http://localhost:5000>** — direct, no TLS (handy for quick testing).
 - **<https://fetchly.iv0ks.dev>** — proxied by Traefik with a real certificate.
@@ -124,12 +128,12 @@ Fetchly serves your documents from a private vault directory. Your goal:
 
 The flag has the format `FLAG{...}`.
 
-| | |
-|---|---|
-| **Vulnerability** | Path Traversal (CWE-22) |
-| **Difficulty** | ⭐ Level 1 — no filtering at all (direct traversal) |
-| **Stack** | Python · Flask |
-| **Entry point** | `GET /docs?name=<name>` |
+|                   |                                                     |
+| ----------------- | --------------------------------------------------- |
+| **Vulnerability** | Path Traversal (CWE-22)                             |
+| **Difficulty**    | ⭐ Level 1 — no filtering at all (direct traversal) |
+| **Stack**         | Python · Flask                                      |
+| **Entry point**   | `GET /docs?name=<name>`                             |
 
 <details>
 <summary>Hint 1</summary>
