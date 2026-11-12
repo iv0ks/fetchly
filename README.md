@@ -8,11 +8,24 @@
 **Fetchly is an intentionally vulnerable application built for security education.** It contains a deliberate [path traversal](https://owasp.org/www-community/attacks/Path_Traversal)
 (CWE-22) flaw so you can practice finding and exploiting it in a safe and controlled environment.
 
-> ⚠️ **Spoilers ahead.** Try the challenge yourself before reading.
+<br>
+
+<div align="center">
+
+| 🛡️ Vulnerability | 🎯 Difficulty | 🛠️ Stack | 🚩 Entry point |
+| :--- | :--- | :--- | :--- |
+| Path Traversal (CWE-22) | ⭐ Level 1 (Direct) | Python · Flask | `GET /docs?name=<name>` |
+
+</div>
 
 <br>
 
-## 🗂️ Project layout
+> [!NOTE]
+> The guided, spoiler-free path is [GUIDE.md](GUIDE.md); the full answer waits in [SOLUTION.md](SOLUTION.md) whenever you want it.
+
+<br>
+
+## 📂 Project layout
 
 The repository is organised so the vulnerable code is easy to find and reason
 about. Three areas, clearly separated: the **application** itself in `app/`
@@ -69,6 +82,8 @@ create it once before the first run:
 docker network create iv0ks-dev
 ```
 
+<br>
+
 #### Option A — just the app (quickest)
 
 Start only the `fetchly` service (Compose skips `traefik` when you name a
@@ -83,6 +98,8 @@ The app is now reachable directly at:
 - **<http://localhost:5000>**
 
 That is all you need to start playing with Burp Suite.
+
+<br>
 
 #### Option B — full stack with Traefik (HTTPS + hostname)
 
@@ -103,9 +120,14 @@ Namecheap, so Traefik needs those API credentials — copy `.env.example` to
 `.env` and fill them in (the `.env` file is gitignored). The dashboard is at
 `https://traefik.iv0ks.dev`.
 
+<br>
+
+> [!CAUTION]
 > The `fetchly.iv0ks.dev` hostname must resolve to the host running the stack.
 > For purely local experiments, Option A (localhost) is simpler and needs no
 > DNS or certificates.
+
+<br>
 
 #### Running without cloning (prebuilt image)
 
@@ -121,33 +143,25 @@ Then open <http://localhost:5000>.
 
 ## 🎯 The Challenge
 
-Fetchly serves your documents from a private vault directory. Your goal:
+### The Scenario
 
-> **Read a file that lives _outside_ the vault — specifically, capture the
-> flag stored in `flag.txt`.**
+Fetchly is a document vault: it serves files from a private
+`docs/` directory, one download at a time. A legitimate user only ever sees the
+documents listed on the dashboard. You're going to prove that boundary is an
+illusion.
 
-The flag has the format `FLAG{...}`.
+### Your objective
 
-|                   |                                                     |
-| ----------------- | --------------------------------------------------- |
-| **Vulnerability** | Path Traversal (CWE-22)                             |
-| **Difficulty**    | ⭐ Level 1 — no filtering at all (direct traversal) |
-| **Stack**         | Python · Flask                                      |
-| **Entry point**   | `GET /docs?name=<name>`                             |
+Read a file that lives _outside_ the vault — specifically, capture the flag in `flag.txt`. 
 
-<details>
-<summary>Hint 1</summary>
-Click <code>Download</code> and watch the request in Burp. The filename goes
-straight into a <code>?name=</code> parameter.
-</details>
+> [!NOTE]
+> The flag has the format `FLAG{...}`.
 
-<details>
-<summary>Hint 2</summary>
-There is no filter here at all. What does the server do if you ask for a
-filename that points <em>up</em> a directory, like <code>../flag.txt</code>?
-</details>
+### The rules
 
-A full walkthrough lives in [SOLUTION.md](SOLUTION.md) (spoilers!).
+Everything happens over HTTP against the running app — no need to
+read the source to win (though you can). The flag is **not** in the repo: it's
+baked into the container, outside `docs/`, so you have to actually reach it.
 
-New to path traversal, or want a guided, non-spoiler approach? Start with the
-**[Learning Guide](GUIDE.md)**.
+> [!TIP]
+> For the full method, the **[Learning Guide](GUIDE.md)** walks you through it.
