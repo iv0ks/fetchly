@@ -1,8 +1,17 @@
-# Fetchly — Solution / Walkthrough
+# Fetchly: Solution / Walkthrough
+
+![CWE-22](https://img.shields.io/badge/CWE--22-Path%20Traversal-red?style=flat-square)
+![Python](https://img.shields.io/badge/Python-Flask-blue?style=flat-square&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Lab-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+
+**Fetchly is an intentionally vulnerable application built for security education.** It contains a deliberate [path traversal](https://owasp.org/www-community/attacks/Path_Traversal)
+(CWE-22) flaw so you can practice finding and exploiting it in a safe and controlled environment.
 
 > ⚠️ **Spoilers ahead.** Try the challenge yourself before reading.
 
-## The vulnerability
+<br>
+
+## 🕵️‍♂️ The vulnerability
 
 `app/routes.py` builds the file path like this:
 
@@ -15,9 +24,11 @@ return send_file(target_path, as_attachment=False)
 
 `os.path.join` resolves `..` components, and the code never checks that the
 final path stays inside `documents_dir`. That is a textbook path traversal
-(CWE-22): the `name` parameter can walk *up* out of the intended directory.
+(CWE-22): the `name` parameter can walk _up_ out of the intended directory.
 
-## Exploitation
+<br>
+
+## 💥 Exploitation
 
 Normal, intended request:
 
@@ -45,11 +56,11 @@ Expected output:
 FLAG{FETCHLY_UNLOCKED_THE_VAULT}
 ```
 
-> The flag is **not** in the repo on purpose — it is created inside the Docker
-> image at build time (see the `Dockerfile`). You have to actually exploit the
-> traversal against the running container to read it.
+The flag is **not** in the repo on purpose — it is created inside the Docker image at build time (see the `Dockerfile`). You have to actually exploit the traversal against the running container to read it.
 
-### Going further
+<br>
+
+## 🚀 Going further
 
 Because there is no filtering at all, you can keep walking up and read files
 from the container filesystem, e.g.:
@@ -58,10 +69,11 @@ from the container filesystem, e.g.:
 GET /docs?name=../../../../etc/passwd
 ```
 
-(Inside the hardened container this reads the container's own `/etc/passwd`,
-not your host's — which is the point of running labs in Docker.)
+(Inside the hardened container this reads the container's own `/etc/passwd`, not your host's — which is the point of running labs in Docker.)
 
-## Doing it in Burp Suite
+<br>
+
+## 🛠️ Burp Suite
 
 1. Proxy your browser through Burp and load <http://localhost:5000>.
 2. Click **Download** on any document — capture the request in **Proxy > HTTP history**.
@@ -73,7 +85,9 @@ Try fuzzing the parameter with **Intruder** using a path-traversal wordlist
 (e.g. from [SecLists](https://github.com/danielmiessler/SecLists)) to see how a
 scanner would find this automatically.
 
-## The fix
+<br>
+
+## 🛡️ The fix
 
 The correct implementation resolves the path and verifies it stays within the
 allowed base directory before serving:
