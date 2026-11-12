@@ -122,4 +122,28 @@ Fetchly serves your documents from a private vault directory. Your goal:
 > **Read a file that lives _outside_ the vault — specifically, capture the
 > flag stored in `flag.txt`.**
 
-The flag has the format `FLAG{...}`. A full walkthrough lives in [SOLUTION.md](SOLUTION.md).
+The flag has the format `FLAG{...}`.
+
+| | |
+|---|---|
+| **Vulnerability** | Path Traversal (CWE-22) |
+| **Difficulty** | ⭐ Level 1 — no filtering at all (direct traversal) |
+| **Stack** | Python · Flask |
+| **Entry point** | `GET /docs?name=<name>` |
+
+<details>
+<summary>Hint 1</summary>
+Click <code>Download</code> and watch the request in Burp. The filename goes
+straight into a <code>?name=</code> parameter.
+</details>
+
+<details>
+<summary>Hint 2</summary>
+There is no filter here at all. What does the server do if you ask for a
+filename that points <em>up</em> a directory, like <code>../flag.txt</code>?
+</details>
+
+A full walkthrough lives in [SOLUTION.md](SOLUTION.md) (spoilers!).
+
+New to path traversal, or want a guided, non-spoiler approach? Start with the
+**[Learning Guide](GUIDE.md)**.
